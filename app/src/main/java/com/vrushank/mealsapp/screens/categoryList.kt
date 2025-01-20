@@ -18,11 +18,12 @@ import androidx.compose.ui.unit.sp
 import com.vrushank.mealsapp.data.Catalog
 
 
+
 @Composable
-fun CategoryListScreen() {
-    val viewModel : CategoryListViewModel = CategoryListViewModel()
-   val  mealCategory:List<Catalog> = viewModel.mealCategories.value
-    //val listValue = listOf("Vrushank Patel","Vrushank Patel","Vrushank Patel","Vrushank Patel","Vrushank Patel")
+fun CategoryListScreen(mealCategory:List<Catalog>) {
+
+
+
     Surface(modifier = Modifier
         .fillMaxSize()
         .background(Color.LightGray)) {
@@ -31,7 +32,8 @@ fun CategoryListScreen() {
         , horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(10.dp)) {
 
             items(mealCategory){
-                item ->  Text(item.name.toString(), fontSize = 16.sp)
+                item ->  Text(item.toString(), fontSize = 16.sp)
+
             }
         }
 

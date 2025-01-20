@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitInstance {
+class RetrofitInstance_ {
     companion object {
         private val retrofit: Retrofit by lazy {
             Retrofit.Builder()

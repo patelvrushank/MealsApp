@@ -25,22 +25,33 @@ class CategoryListViewModel(val repository: MealCategoryRepository = MealCategor
     {
         viewModelScope.launch {
             val result = repository.mealRepository()
-            when(result){
+            when (result) {
                 is Resource.Success -> {
                     val categories =
-                    result.data?.categories?.mapIndexed(){
-                        index , category -> Catalog(category.strCategory)
-                    } as List<Catalog>
-                    _mealCategories.value += categories
-                    println("VD ${_mealCategories.value}")
+                        result.data?.categories?.mapIndexed { index, category ->
+                            Catalog(
+                                category.idCategory,
+                                category.strCategory,
+                                category.strCategoryThumb,
+                                category.strCategoryDescription
+                            )
+                        } as List<Catalog>
+
+                    _mealCategories.value = categories
+
                 }
+
                 is Resource.Error -> {
-                    println("Error occued in the data" )
+                    println("Error occued in the data")
                 }
+
                 is Resource.Loading -> {
 
                 }
+
+
             }
+
         }
     }
 }
