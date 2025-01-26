@@ -1,5 +1,6 @@
 package com.vrushank.mealsapp.repository
 
+import com.vrushank.mealsapp.data.remote.Instruction.Instruction
 import com.vrushank.mealsapp.data.remote.MealCategory
 import com.vrushank.mealsapp.data.retrofit.RetrofirInstance
 
@@ -17,5 +18,15 @@ class MealCategoryRepository() {
         println("VD:${response.categories.toString()}")
         return Resource.Success(response)
 
+    }
+
+    suspend fun getInsruction(item:String? = ""):Resource<Instruction>{
+        val response = try {
+            api.getInstruction(item)
+        }
+        catch (e:Exception){
+            return Resource.Error("Error occured in instruction loading")
+        }
+        return Resource.Success(response)
     }
 }

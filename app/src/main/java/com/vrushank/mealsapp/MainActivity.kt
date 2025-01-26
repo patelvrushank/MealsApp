@@ -26,45 +26,51 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val navController= rememberNavController()
+            val navController = rememberNavController()
             val viewModel: CategoryListViewModel by viewModels {
                 ViewModelFactory(MealCategoryRepository())
             }
             MealsAppTheme {
-                val mealCategoryUiState=viewModel.mealCategories
+                val mealCategoryUiState = viewModel.mealCategories
+                val seachValue = viewModel.SeachMeal
 
-                NavHost(navController,startDestination = "category_list"){
-                    composable(route = "category_list"){
-                        CategoryListScreen(mealCategoryUiState.value){
+               // NavHost(navController, startDestination = "category_list/{query}") {
+                NavHost(navController, startDestination = "category_list") {
+
+                    composable(route = "category_list") {
+                        // Init Viewmodel Here
+                        CategoryListScreen(mealCategoryUiState.value, nav = {
                             navController.navigate(it)
-                        }
+                        }, mealSearch = {
+                               // query -> navController.navigate("category_list")
+                            viewModel.searchMeal(it)
+                        }, seachValue.value)
                     }
-                    composable(route = "category_detail_screen/{id}/{name}/{image}/{desc}", arguments = listOf(
-                        navArgument("id") {
-                            type = NavType.StringType
-                        },navArgument("name") {
-                            type = NavType.StringType
-                        },navArgument("image") {
-                            type = NavType.StringType
-                        },navArgument("desc") {
-                            type = NavType.StringType
-                        }
-                    )) {
-                        backStackEntry->
+                    composable(route = "category_detail_screen/{id}/{name}/{image}/{desc}",
+                        arguments = listOf(
+                            navArgument("id") {
+                                type = NavType.StringType
+                            }, navArgument("name") {
+                                type = NavType.StringType
+                            }, navArgument("image") {
+                                type = NavType.StringType
+                            }, navArgument("desc") {
+                                type = NavType.StringType
+                            }
+                        )) { backStackEntry ->
                         val id = backStackEntry.arguments?.getString("id")
                         val name = backStackEntry.arguments?.getString("name")
                         val image = backStackEntry.arguments?.getString("image")
                         val desc = backStackEntry.arguments?.getString("desc")
 
-                        CategoryDetailScreen(MealType(id,name, image, desc))
+                        CategoryDetailScreen(MealType(id, name, image, desc))
 
                     }
                 }
 
 
-
-                }
             }
         }
     }
+}
 

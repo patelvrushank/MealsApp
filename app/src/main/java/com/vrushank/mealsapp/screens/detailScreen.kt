@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets
 @Composable
 fun CategoryDetailScreen(meal: MealType) {
     val scrollState = rememberScrollState()
+
     val scale = 1f - (scrollState.value / 600f).coerceIn(0f, 0.5f)
     val imageUrl = URLDecoder.decode(meal.image, StandardCharsets.UTF_8.toString())
     Surface(
