@@ -1,9 +1,13 @@
 package com.vrushank.mealsapp.screens
 
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,12 +24,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,6 +44,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -58,6 +67,8 @@ import coil.compose.AsyncImage
 import com.vrushank.mealsapp.R
 import com.vrushank.mealsapp.data.Catalog
 import com.vrushank.mealsapp.data.retrofit.SeachMeal
+import kotlinx.coroutines.delay
+
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -68,7 +79,8 @@ fun CategoryListScreen(
     mealCategory: List<Catalog>,
     nav: (String) -> Unit,
     mealSearch: (String) -> Unit,
-    seachMeal: List<Catalog>
+    seachMeal: List<Catalog>,
+    onBack: () -> Unit
 ) {
 
 
@@ -78,6 +90,7 @@ fun CategoryListScreen(
     var queryText by remember { mutableStateOf("Search by letter") }
     var searchActive by remember { mutableStateOf(false) }
     var isVisible by remember { mutableStateOf(false) }
+
 
     Surface(
         modifier = Modifier
@@ -103,11 +116,24 @@ fun CategoryListScreen(
             Box(
                 contentAlignment = Alignment.Center, modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 30.dp, start = 16.dp, end = 10.dp)
+                    .padding(top = 30.dp, start = 0.dp, end = 10.dp)
                     .height(textFieldHeight)
             ) {
                 Row {
                     // If Query is not null then show back arrow.
+                   if(isVisible) {Icon(
+                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "back arrow",
+                        modifier = Modifier
+
+                            .padding(start = 0.dp, top = 10.dp,end = 5.dp)
+                            .size(40.dp)
+                            .clickable { onBack() }
+
+
+
+                    )}
+
                     BasicTextField(
                         value = queryText,
 
@@ -164,6 +190,7 @@ fun CategoryListScreen(
                 }
 
                 items(displayList) { item ->
+
                     val encodedUrl =
                         URLEncoder.encode(item.image, StandardCharsets.UTF_8.toString())
                     Card(modifier = Modifier
@@ -205,11 +232,11 @@ fun CategoryListScreen(
                             }
                         }
                     }
-
                 }
             }
-
-
         }
+
+
     }
 }
+

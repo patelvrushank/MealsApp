@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
                         }, mealSearch = {
                                // query -> navController.navigate("category_list")
                             viewModel.searchMeal(it)
-                        }, seachValue.value)
+                        }, seachValue.value, {navController.popBackStack()})
                     }
                     composable(route = "category_detail_screen/{id}/{name}/{image}/{desc}",
                         arguments = listOf(
