@@ -1,8 +1,10 @@
 package com.vrushank.mealsapp.screens
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vrushank.mealsapp.data.Catalog
@@ -14,7 +16,7 @@ import com.vrushank.mealsapp.util.Resource
 import kotlinx.coroutines.launch
 
 class CategoryListViewModel(
-    //private val query: String = "",
+     private val query: String,
     private val repository: MealCategoryRepository = MealCategoryRepository()
 ) : ViewModel() {
 
@@ -23,13 +25,26 @@ class CategoryListViewModel(
     private val _SeachMeal = mutableStateOf<List<Catalog>>(listOf())
     val SeachMeal: MutableState<List<Catalog>> get() = _SeachMeal
 
+//    private val _query = mutableStateOf(query)
+//    val query: MutableState<String> = _query
+
+//    fun updateQuery(newQuery: String) {
+//        _query.value = newQuery
+//    }
+
+
     init {
-       // if(query.isEmpty()) {
+        if (query.isEmpty()) {
+            println("VD : query is emptry")
             loadMealList()
-//        }else{
-//
-//        }
+
+        } else {
+            println("VD: query is not empty")
+            searchMeal(query)
+
+        }
     }
+
 
     fun loadMealList() {
         viewModelScope.launch {
@@ -66,9 +81,10 @@ class CategoryListViewModel(
         }
     }
 
-    fun searchMeal(key: String) {
+    fun searchMeal(key: String? = "") {
         viewModelScope.launch {
             val searchResult = repository.getInsruction(key)
+            println("Call")
             when (searchResult) {
                 is Resource.Success -> {
                     val meals =

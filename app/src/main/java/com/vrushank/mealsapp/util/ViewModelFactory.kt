@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.vrushank.mealsapp.repository.MealCategoryRepository
 import com.vrushank.mealsapp.screens.CategoryListViewModel
 
-class ViewModelFactory(private val repository: MealCategoryRepository):ViewModelProvider.Factory {
+class ViewModelFactory(private val query:String ? = "",private val repository: MealCategoryRepository):ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(CategoryListViewModel::class.java)){
             @Suppress("UNCKECKED_CAST")
-            return CategoryListViewModel(repository) as T
+            return query?.let { CategoryListViewModel(it,repository) } as T
 
 
         }

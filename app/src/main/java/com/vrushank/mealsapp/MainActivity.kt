@@ -5,6 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -27,25 +31,72 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
-            val viewModel: CategoryListViewModel by viewModels {
-                ViewModelFactory(MealCategoryRepository())
-            }
-            MealsAppTheme {
-                val mealCategoryUiState = viewModel.mealCategories
-                val seachValue = viewModel.SeachMeal
+            //var query:String? = ""
+            val _query = MutableLiveData<String>("")
+            val query: LiveData<String> = _query
 
-               // NavHost(navController, startDestination = "category_list/{query}") {
+            val vm: CategoryListViewModel by viewModels {
+                println("VD: passing query - main")
+                ViewModelFactory("", MealCategoryRepository())
+            }
+            val vm1: CategoryListViewModel by viewModels {
+                println("VD: passing query - main")
+                ViewModelFactory(query.toString(), MealCategoryRepository())
+            }
+
+
+            MealsAppTheme {
+
+
                 NavHost(navController, startDestination = "category_list") {
 
-                    composable(route = "category_list") {
+                    composable(
+                        route = "category_list"
+                    ) {
+//                        val viewModel: CategoryListViewModel by viewModels {
+//                            ViewModelFactory(query = "", MealCategoryRepository())
+//                        }
+                        val mealCategoryUiState = vm.mealCategories
+                        val seachValue = vm.SeachMeal
+
                         // Init Viewmodel Here
                         CategoryListScreen(mealCategoryUiState.value, nav = {
                             navController.navigate(it)
                         }, mealSearch = {
-                               // query -> navController.navigate("category_list")
-                            viewModel.searchMeal(it)
-                        }, seachValue.value, {navController.popBackStack()})
+
+                            navController.navigate(it)
+                        }, seachValue.value, { navController.popBackStack() })
                     }
+
+                    composable(
+                        route = "category_list/{query}",
+                        arguments = listOf(navArgument("query") { type = NavType.StringType
+                        })
+                    ){
+
+                        backStackEntry ->
+
+                         _query.value = backStackEntry.arguments?.getString("query")
+                        if (!query.value.isNullOrEmpty()) {
+                            vm1.searchMeal(query.value)
+                        }
+                        val mealCategoryUiState = vm1.mealCategories
+                        val seachValue = vm1.SeachMeal
+                       // vm.searchMeal(query)
+
+                        //print("call - $query")
+
+
+                        //viewModel1.searchMeal(query)
+                        CategoryListScreen(
+                            mealCategoryUiState.value,
+                            nav = { navController.navigate(it) },
+                            mealSearch = { navController.navigate(it) },
+                            seachValue.value,
+                            { navController.popBackStack()  })
+
+                    }
+
                     composable(route = "category_detail_screen/{id}/{name}/{image}/{desc}",
                         arguments = listOf(
                             navArgument("id") {

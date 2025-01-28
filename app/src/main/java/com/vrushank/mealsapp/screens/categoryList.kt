@@ -121,7 +121,7 @@ fun CategoryListScreen(
             ) {
                 Row {
                     // If Query is not null then show back arrow.
-                   if(isVisible) {Icon(
+                  Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
                         contentDescription = "back arrow",
                         modifier = Modifier
@@ -132,7 +132,7 @@ fun CategoryListScreen(
 
 
 
-                    )}
+                    )
 
                     BasicTextField(
                         value = queryText,
@@ -156,7 +156,8 @@ fun CategoryListScreen(
                         onClick = {
                             if (queryText != "Search by letter") {
                                 isVisible = true
-                                mealSearch(queryText)
+                                mealSearch("category_list/$queryText")
+                               // mealSearch(queryText)
 
                             } else {
                                 isVisible = false
@@ -182,7 +183,7 @@ fun CategoryListScreen(
                 state = lazyListScroll,
                 modifier = Modifier.padding(10.dp, bottom = 30.dp)
             ) {
-                if (isVisible && seachMeal.isNotEmpty()) {
+                if (seachMeal.isNotEmpty()) {
                     displayList = seachMeal
                     println("Visible $seachMeal")
                 } else {
