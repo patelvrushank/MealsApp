@@ -35,54 +35,60 @@ class MainActivity : ComponentActivity() {
             val _query = MutableLiveData<String>("")
             val query: LiveData<String> = _query
 
-            val vm: CategoryListViewModel by viewModels {
+         /*   val vm: CategoryListViewModel by viewModels {
                 println("VD: passing query - main")
                 ViewModelFactory("", MealCategoryRepository())
             }
-            val vm1: CategoryListViewModel by viewModels {
-                println("VD: passing query - main")
-                ViewModelFactory(query.toString(), MealCategoryRepository())
-            }
+            val mealCategoryUiState = vm.mealCategories
+            val seachValue = vm.SeachMeal*/
+//            val vm1: CategoryListViewModel by viewModels {
+//                println("VD: passing query - vm1 main")
+//                ViewModelFactory(query.toString(), MealCategoryRepository())
+//            }
 
 
             MealsAppTheme {
 
 
-                NavHost(navController, startDestination = "category_list") {
+                NavHost(navController, startDestination = "category_list/") {
 
-                    composable(
-                        route = "category_list"
-                    ) {
-//                        val viewModel: CategoryListViewModel by viewModels {
-//                            ViewModelFactory(query = "", MealCategoryRepository())
-//                        }
-                        val mealCategoryUiState = vm.mealCategories
-                        val seachValue = vm.SeachMeal
-
-                        // Init Viewmodel Here
-                        CategoryListScreen(mealCategoryUiState.value, nav = {
-                            navController.navigate(it)
-                        }, mealSearch = {
-
-                            navController.navigate(it)
-                        }, seachValue.value, { navController.popBackStack() })
-                    }
+//                    composable(
+//                        route = "category_list"
+//                    ) {
+////                        val viewModel: CategoryListViewModel by viewModels {
+////                            ViewModelFactory(query = "", MealCategoryRepository())
+////                        }
+//
+//                        //val seachValue = vm.SeachMeal
+//
+//                        // Init Viewmodel Here
+//                        CategoryListScreen(mealCategoryUiState.value, nav = {
+//                            navController.navigate(it)
+//                        }, mealSearch = {
+//
+//                            navController.navigate(it)
+//                        }, seachValue.value, { navController.popBackStack() })
+//                    }
 
                     composable(
                         route = "category_list/{query}",
                         arguments = listOf(navArgument("query") { type = NavType.StringType
                         })
-                    ){
+                    ){ backStackEntry ->
 
-                        backStackEntry ->
-
-                         _query.value = backStackEntry.arguments?.getString("query")
-                        if (!query.value.isNullOrEmpty()) {
-                            vm1.searchMeal(query.value)
+                        val vm: CategoryListViewModel by viewModels {
+                            println("VD: passing query - main")
+                            ViewModelFactory("", MealCategoryRepository())
                         }
-                        val mealCategoryUiState = vm1.mealCategories
-                        val seachValue = vm1.SeachMeal
-                       // vm.searchMeal(query)
+                        val mealCategoryUiState = vm.mealCategories
+                        val seachValue = vm.SeachMeal
+                         _query.value = backStackEntry.arguments?.getString("query")
+                       /* if (!query.value.isNullOrEmpty()) {
+                            vm.searchMeal(query.value)
+                        }*/
+                        //val mealCategoryUiState = vm1.mealCategories
+                       // val seachValue = vm.SeachMeal
+                        //vm1.searchMeal(query.toString())
 
                         //print("call - $query")
 
@@ -93,7 +99,10 @@ class MainActivity : ComponentActivity() {
                             nav = { navController.navigate(it) },
                             mealSearch = { navController.navigate(it) },
                             seachValue.value,
-                            { navController.popBackStack()  })
+                            {
+                                navController.popBackStack()
+
+                            })
 
                     }
 

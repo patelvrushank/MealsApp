@@ -1,25 +1,17 @@
 package com.vrushank.mealsapp.screens
 
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,38 +29,24 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextFieldDefaults.shape
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.compose.AsyncImage
-import com.vrushank.mealsapp.R
 import com.vrushank.mealsapp.data.Catalog
-import com.vrushank.mealsapp.data.retrofit.SeachMeal
-import kotlinx.coroutines.delay
-
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -86,18 +64,18 @@ fun CategoryListScreen(
 
     var displayList by remember { mutableStateOf(mealCategory) }
 
-
+    var coroutineScope = rememberCoroutineScope()
     var queryText by remember { mutableStateOf("Search by letter") }
     var searchActive by remember { mutableStateOf(false) }
     var isVisible by remember { mutableStateOf(false) }
-
+    var backButtonClick by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(true) }
 
     Surface(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.LightGray)
     ) {
-
         val lazyListScroll = rememberLazyListState()
         val offset =
             remember { derivedStateOf { lazyListScroll.firstVisibleItemScrollOffset + lazyListScroll.firstVisibleItemIndex * 100 } }
@@ -121,18 +99,20 @@ fun CategoryListScreen(
             ) {
                 Row {
                     // If Query is not null then show back arrow.
-                  Icon(
-                        imageVector = Icons.Default.KeyboardArrowLeft,
-                        contentDescription = "back arrow",
-                        modifier = Modifier
+                    if (isVisible) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowLeft,
+                            contentDescription = "back arrow",
+                            modifier = Modifier
 
-                            .padding(start = 0.dp, top = 10.dp,end = 5.dp)
-                            .size(40.dp)
-                            .clickable { onBack() }
-
-
-
-                    )
+                                .padding(start = 0.dp, top = 10.dp, end = 5.dp)
+                                .size(40.dp)
+                                .clickable {
+                                    backButtonClick = true
+                                    onBack()
+                                }
+                        )
+                    }
 
                     BasicTextField(
                         value = queryText,
@@ -155,12 +135,13 @@ fun CategoryListScreen(
                     Button(
                         onClick = {
                             if (queryText != "Search by letter") {
-                                isVisible = true
+                                backButtonClick = false
                                 mealSearch("category_list/$queryText")
-                               // mealSearch(queryText)
+
+                                // mealSearch(queryText)
 
                             } else {
-                                isVisible = false
+
                             }
 
 
@@ -183,11 +164,14 @@ fun CategoryListScreen(
                 state = lazyListScroll,
                 modifier = Modifier.padding(10.dp, bottom = 30.dp)
             ) {
-                if (seachMeal.isNotEmpty()) {
+                if (seachMeal.isNotEmpty() && !backButtonClick) {
                     displayList = seachMeal
+                    isVisible = true
                     println("Visible $seachMeal")
                 } else {
                     displayList = mealCategory
+                    isVisible = false
+
                 }
 
                 items(displayList) { item ->
@@ -239,5 +223,8 @@ fun CategoryListScreen(
 
 
     }
+
+
 }
+
 
