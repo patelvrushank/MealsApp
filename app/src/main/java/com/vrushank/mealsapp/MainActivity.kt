@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.key
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -72,17 +73,27 @@ class MainActivity : ComponentActivity() {
 
                     composable(
                         route = "category_list/{query}",
-                        arguments = listOf(navArgument("query") { type = NavType.StringType
+                        arguments = listOf(navArgument("query") {
+                            type = NavType.StringType
+                            defaultValue = ""
                         })
                     ){ backStackEntry ->
 
-                        val vm: CategoryListViewModel by viewModels {
-                            println("VD: passing query - main")
-                            ViewModelFactory("", MealCategoryRepository())
-                        }
+                        val query =  backStackEntry.arguments?.getString("query")
+
+                      /*  val vm: CategoryListViewModel by viewModels {
+                            println("VD: passing query - main and")
+                            ViewModelFactory(query, MealCategoryRepository())
+                        }*/
+                        val vm : CategoryListViewModel = viewModel(
+                            key = query,
+                            factory = ViewModelFactory(query, MealCategoryRepository())
+                            )
+                        println("instance of this viewmodel : $vm")
+
                         val mealCategoryUiState = vm.mealCategories
                         val seachValue = vm.SeachMeal
-                         _query.value = backStackEntry.arguments?.getString("query")
+
                        /* if (!query.value.isNullOrEmpty()) {
                             vm.searchMeal(query.value)
                         }*/
@@ -91,8 +102,6 @@ class MainActivity : ComponentActivity() {
                         //vm1.searchMeal(query.toString())
 
                         //print("call - $query")
-
-
                         //viewModel1.searchMeal(query)
                         CategoryListScreen(
                             mealCategoryUiState.value,
