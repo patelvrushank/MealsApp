@@ -122,8 +122,6 @@ fun CategoryListScreen(
                         modifier = Modifier
                             .fillMaxWidth(0.6f)
                             .padding(top = 15.dp, end = 10.dp)
-
-                            //.height(textFieldHeight)
                             .border(
                                 border = BorderStroke(2.dp, Color.Black),
                                 shape = RoundedCornerShape(5.dp)
@@ -138,9 +136,7 @@ fun CategoryListScreen(
                                 backButtonClick = false
                                 mealSearch("category_list/$queryText")
 
-                                // mealSearch(queryText)
 
-                            } else {
 
                             }
 
@@ -191,7 +187,7 @@ fun CategoryListScreen(
                                     .padding(4.dp)
                                     .fillParentMaxWidth(0.3f)
                                     .align(alignment = Alignment.CenterVertically)
-                                //contentScale = ContentScale.Crop
+
                             )
                             Spacer(
                                 modifier = Modifier
